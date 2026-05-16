@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0b0f;--sf:#111318;--s2:#181b22;
+  --bd:rgba(255,255,255,0.08);--bdh:rgba(255,255,255,0.15);
+  --ac:#6ee7b7;--ac2:#818cf8;--tx:#f0f0f5;
+  --mu:#6b7280;--mu2:#9ca3af;--rd:#f87171;--gn:#34d399;
+  --fh:'Syne',sans-serif;--fm:'DM Mono',monospace;
+}
+body{background:var(--bg);color:var(--tx);font-family:var(--fm);padding:2rem 1.25rem 4rem;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(110,231,183,.03)1px,transparent 1px),linear-gradient(90deg,rgba(110,231,183,.03)1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.w{position:relative;z-index:1;max-width:820px;margin:0 auto}
+
+.hdr{display:flex;align-items:flex-start;gap:1.1rem;margin-bottom:2.5rem}
+.logo{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#6ee7b7,#818cf8);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:800;font-size:17px;color:#0a0b0f;flex-shrink:0}
+.hdr h1{font-family:var(--fh);font-size:1.7rem;font-weight:800;letter-spacing:-.04em;background:linear-gradient(90deg,#f0f0f5 40%,#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.hdr p{margin-top:4px;font-size:.76rem;color:var(--mu2)}
+.tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.tag{font-size:.63rem;padding:3px 9px;border-radius:999px;border:1px solid var(--bdh);color:var(--mu2)}
+.tag.g{border-color:rgba(110,231,183,.3);color:var(--ac)}
+.tag.p{border-color:rgba(129,140,248,.3);color:var(--ac2)}
+
+.sc{background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:1.5rem;margin-bottom:1.2rem;transition:border-color .2s}
+.sc:focus-within{border-color:rgba(110,231,183,.3)}
+.lbl{font-size:.67rem;letter-spacing:.12em;color:var(--mu);text-transform:uppercase;margin-bottom:.6rem;display:block}
+.ir{display:flex;gap:10px}
+input{flex:1;background:var(--s2);border:1px solid var(--bd);border-radius:10px;color:var(--tx);font-family:var(--fm);font-size:.82rem;padding:.72rem 1rem;outline:none;transition:border-color .2s,box-shadow .2s}
+input::placeholder{color:var(--mu)}
+input:focus{border-color:rgba(110,231,183,.5);box-shadow:0 0 0 3px rgba(110,231,183,.07)}
+.btn{background:linear-gradient(135deg,#6ee7b7,#818cf8);border:none;border-radius:10px;color:#0a0b0f;font-family:var(--fh);font-size:.86rem;font-weight:700;padding:.72rem 1.3rem;cursor:pointer;white-space:nowrap;transition:opacity .15s,transform .15s}
+.btn:hover{opacity:.88;transform:translateY(-1px)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:1rem}
+.chip{font-size:.65rem;padding:4px 10px;border-radius:999px;border:1px solid var(--bdh);background:transparent;color:var(--mu2);cursor:pointer;font-family:var(--fm);transition:all .15s}
+.chip.on{background:rgba(110,231,183,.1);border-color:rgba(110,231,183,.4);color:var(--ac)}
+
+.sb{display:flex;align-items:center;gap:10px;font-size:.77rem;color:var(--mu2);margin-bottom:1.2rem;padding:.7rem 1rem;background:var(--sf);border:1px solid var(--bd);border-radius:10px}
+.sb.h{display:none}
+.spin{width:14px;height:14px;border:2px solid var(--bdh);border-top-color:var(--ac);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.steps{display:flex;gap:5px;margin-left:auto}
+.step{width:6px;height:6px;border-radius:50%;background:var(--bd);transition:background .3s}
+.step.d{background:var(--ac)}
+.step.a{background:var(--ac2);animation:pls 1s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.35}}
+
+.errbx{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:10px;padding:.85rem 1.1rem;font-size:.77rem;color:var(--rd);margin-bottom:1.2rem;display:none}
+.errbx.v{display:block;animation:fu .3s ease}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.sum{background:var(--sf);border:1px solid rgba(110,231,183,.2);border-radius:18px;padding:1.6rem;margin-bottom:1.4rem;display:none}
+.sum.v{display:block;animation:fu .4s ease}
+.wa{font-size:.7rem;color:var(--mu2);margin-bottom:1rem;word-break:break-all;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wp{background:rgba(110,231,183,.1);border:1px solid rgba(110,231,183,.2);border-radius:999px;color:var(--ac);font-size:.68rem;padding:2px 9px;white-space:nowrap}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.2rem}
+.sb2{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:.85rem 1rem}
+.sl{font-size:.61rem;color:var(--mu);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.sv{font-family:var(--fh);font-size:1.6rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+.sv.a{color:var(--ac)}
+.st{font-size:.76rem;color:var(--mu2);line-height:1.7;padding-top:1rem;border-top:1px solid var(--bd)}
+
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:12px;margin-bottom:2rem}
+.cc{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:1.1rem 1.15rem;animation:fu .35s ease both;transition:border-color .2s,transform .15s}
+.cc:hover{border-color:var(--bdh);transform:translateY(-2px)}
+.cc.act{border-color:rgba(110,231,183,.18)}
+.cc.er{border-color:rgba(248,113,113,.15)}
+.ch{display:flex;align-items:center;margin-bottom:.85rem}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--mu);flex-shrink:0}
+.dot.ok{background:var(--gn);box-shadow:0 0 5px rgba(52,211,153,.45)}
+.dot.er{background:var(--rd)}
+.cn{font-family:var(--fh);font-size:.88rem;font-weight:700;letter-spacing:-.02em;flex:1;margin-left:7px}
+.cs{font-size:.63rem;color:var(--mu);padding:2px 7px;border:1px solid var(--bdh);border-radius:999px}
+.cst{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ml{font-size:.6rem;color:var(--mu);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.mv{font-size:1.05rem;font-family:var(--fh);font-weight:700;letter-spacing:-.03em}
+.mv.g{color:var(--gn)}
+.mv.m{color:var(--mu2);font-size:.78rem;font-family:var(--fm);font-weight:400;word-break:break-all}
+.ce{font-size:.67rem;color:var(--rd);margin-top:7px;line-height:1.5}
+
+.skelg{display:none;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:12px;margin-bottom:2rem}
+.skelg.v{display:grid}
+.sk{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:1.1rem 1.15rem;height:118px}
+.skl{height:9px;border-radius:5px;background:linear-gradient(90deg,var(--s2)25%,rgba(255,255,255,.04)50%,var(--s2)75%);background-size:200% 100%;animation:shim 1.4s infinite;margin-bottom:8px}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+.note{font-size:.7rem;color:var(--mu);background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:.7rem 1rem;margin-bottom:1.4rem;line-height:1.6}
+.note strong{color:var(--ac2)}
+
+.ft{border-top:1px solid var(--bd);padding-top:1.4rem;display:flex;flex-direction:column;gap:8px}
+.fr{display:flex;justify-content:space-between;font-size:.69rem;color:var(--mu)}
+.fr a{color:var(--ac2);text-decoration:none}
+.fr a:hover{text-decoration:underline}
+.fr code{font-family:var(--fm);color:var(--mu2);font-size:.67rem}
+
+@media(max-width:480px){.ir{flex-direction:column}.btn{width:100%}.hdr{flex-direction:column;gap:.8rem}.hdr h1{font-size:1.35rem}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hdr">
+  <div class="logo">GL</div>
+  <div>
+    <h1>EVM Wallet Checker</h1>
+    <p>GenLayer Intelligent Contract · Cross-chain analytics</p>
+    <div class="tags">
+      <span class="tag g">8 EVM Chains</span>
+      <span class="tag p">AI Summary</span>
+      <span class="tag">Gas Tracker</span>
+      <span class="tag">Tx Counter</span>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Prototype mode</strong> — This UI previews the GenLayer Intelligent Contract (<code>evm_wallet_checker.py</code>). Data is deterministically generated from your wallet address to simulate what the deployed contract returns. Connect to GenLayer Testnet to fetch live on-chain data.
+</div>
+
+<div class="sc">
+  <label class="lbl" for="wi">Wallet Address</label>
+  <div class="ir">
+    <input id="wi" type="text" placeholder="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" spellcheck="false" autocomplete="off" onkeydown="if(event.key==='Enter')go()"/>
+    <button class="btn" id="gbtn" onclick="go()">Check Wallet ↗</button>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+
+<div class="sb h" id="sb">
+  <div class="spin"></div>
+  <span id="stxt">Initialising…</span>
+  <div class="steps">
+    <div class="step" id="p0"></div><div class="step" id="p1"></div>
+    <div class="step" id="p2"></div><div class="step" id="p3"></div>
+  </div>
+</div>
+
+<div class="errbx" id="eb"></div>
+
+<div class="sum" id="sum">
+  <div class="wa"><span class="wp">WALLET</span><span id="ashow"></span></div>
+  <div class="sg">
+    <div class="sb2"><div class="sl">Total Txns</div><div class="sv a" id="ttx">—</div></div>
+    <div class="sb2"><div class="sl">Active Chains</div><div class="sv" id="actc">—</div></div>
+    <div class="sb2"><div class="sl">Chains Scanned</div><div class="sv" id="chkc">—</div></div>
+  </div>
+  <div class="st" id="smtxt">—</div>
+</div>
+
+<div class="skelg" id="skelg">
+  <div class="sk"><div class="skl" style="width:55%"></div><div class="skl" style="width:38%;margin-top:14px"></div><div class="skl" style="width:70%;margin-top:6px"></div></div>
+  <div class="sk"><div class="skl" style="width:48%"></div><div class="skl" style="width:44%;margin-top:14px"></div><div class="skl" style="width:63%;margin-top:6px"></div></div>
+  <div class="sk"><div class="skl" style="width:60%"></div><div class="skl" style="width:36%;margin-top:14px"></div><div class="skl" style="width:76%;margin-top:6px"></div></div>
+  <div class="sk"><div class="skl" style="width:43%"></div><div class="skl" style="width:52%;margin-top:14px"></div><div class="skl" style="width:58%;margin-top:6px"></div></div>
+</div>
+
+<div class="cg" id="cg"></div>
+
+<div class="ft">
+  <div class="fr"><span>Contract file</span><code>evm_wallet_checker.py</code></div>
+  <div class="fr"><span>Deploy target</span><span>GenLayer Testnet — Asimov</span></div>
+  <div class="fr"><span>Docs</span><a href="https://docs.genlayer.com" target="_blank">docs.genlayer.com ↗</a></div>
+  <div class="fr"><span>Studio</span><a href="https://studio.genlayer.com" target="_blank">studio.genlayer.com ↗</a></div>
+</div>
+
+</div>
+<script>
+const CHAINS = [
+  {key:"ethereum",  label:"Ethereum",         sym:"ETH"},
+  {key:"polygon",   label:"Polygon",           sym:"MATIC"},
+  {key:"bsc",       label:"BNB Smart Chain",   sym:"BNB"},
+  {key:"arbitrum",  label:"Arbitrum One",      sym:"ETH"},
+  {key:"optimism",  label:"Optimism",          sym:"ETH"},
+  {key:"base",      label:"Base",              sym:"ETH"},
+  {key:"avalanche", label:"Avalanche C-Chain", sym:"AVAX"},
+  {key:"fantom",    label:"Fantom",            sym:"FTM"},
+];
+
+let selected = CHAINS.map(c=>c.key);
+let busy = false;
+
+(()=>{
+  const el = document.getElementById("chips");
+  CHAINS.forEach(c=>{
+    const b = document.createElement("button");
+    b.className="chip on"; b.textContent=c.label; b.dataset.k=c.key;
+    b.onclick=()=>{
+      if(selected.includes(c.key)){
+        if(selected.length===1) return;
+        selected=selected.filter(x=>x!==c.key); b.classList.remove("on");
+      } else { selected.push(c.key); b.classList.add("on"); }
+    };
+    el.appendChild(b);
+  });
+})();
+
+function setSt(t,s){
+  document.getElementById("sb").classList.remove("h");
+  document.getElementById("stxt").textContent=t;
+  [0,1,2,3].forEach(i=>{
+    const d=document.getElementById("p"+i);
+    d.className="step"+(i<s?" d":i===s?" a":"");
+  });
+}
+function hideSt(){ document.getElementById("sb").classList.add("h"); }
+function showErr(m){ const e=document.getElementById("eb"); e.textContent=m; e.classList.add("v"); }
+function hideErr(){ document.getElementById("eb").classList.remove("v"); }
+function hideSum(){ document.getElementById("sum").classList.remove("v"); document.getElementById("cg").innerHTML=""; }
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* Seeded PRNG from wallet address bytes — fully deterministic, no network calls */
+function mkRng(addr){
+  let s = 0n;
+  for(let i=2;i<addr.length;i++) s=(s*31n+BigInt(addr.charCodeAt(i)))&0xFFFFFFFFn;
+  return function(){
+    s^=s<<13n; s&=0xFFFFFFFFn;
+    s^=s>>17n;
+    s^=s<<5n; s&=0xFFFFFFFFn;
+    return Number(s)/4294967296;
+  };
+}
+
+function fmtGas(n){
+  if(n===0) return "0";
+  if(n<0.0001) return n.toFixed(8).replace(/0+$/,"");
+  if(n<1) return n.toFixed(6).replace(/0+$/,"");
+  return n.toFixed(4).replace(/0+$/,"");
+}
+
+function generateReport(addr){
+  const rng = mkRng(addr);
+  const ri = (a,b)=>Math.floor(rng()*(b-a+1))+a;
+  const rf = (a,b)=>rng()*(b-a)+a;
+
+  const type = rng();
+  const isWhale   = type > 0.82;
+  const isDormant = type < 0.12;
+
+  const results = CHAINS.map((c,i)=>{
+    // Fantom: show error ~50% of time
+    if(i===7 && rng()>0.5){
+      return {chain_name:c.label,symbol:c.sym,tx_count:0,total_gas_fee_native:"0",status:"error",error_msg:"Explorer API rate limit exceeded. Retry shortly."};
+    }
+
+    let tx=0, gas="0", status="no_activity";
+
+    if(isDormant){
+      tx = rng()>0.65 ? ri(1,8) : 0;
+    } else if(isWhale){
+      tx = i===0 ? ri(1200,8000) : i<=1 ? ri(200,1200) : i<=3 ? ri(50,400) : ri(0,80);
+    } else {
+      tx = i===0 ? ri(15,600) : i<=1 ? ri(0,180) : i<=3 ? ri(0,60) : ri(0,25);
+    }
+
+    if(tx>0){
+      status="ok";
+      let g;
+      if(c.sym==="ETH")  g = tx*rf(0.00005,0.003);
+      else if(c.sym==="MATIC") g = tx*rf(0.002,0.1);
+      else if(c.sym==="BNB")  g = tx*rf(0.0001,0.002);
+      else if(c.sym==="AVAX") g = tx*rf(0.001,0.04);
+      else g = tx*rf(0.005,0.4);
+      gas=fmtGas(g);
+    }
+
+    return {chain_name:c.label,symbol:c.sym,tx_count:tx,total_gas_fee_native:gas,status,error_msg:""};
+  });
+
+  const totalTx = results.filter(r=>r.status==="ok").reduce((s,r)=>s+r.tx_count,0);
+  const active = results.filter(r=>r.status==="ok"&&r.tx_count>0).sort((a,b)=>b.tx_count-a.tx_count);
+  const top = active[0];
+
+  let summary;
+  if(!top||totalTx===0){
+    summary=`This wallet shows no meaningful on-chain activity across all 8 scanned EVM chains. It may be a freshly created address or used purely for storage. No gas expenditure was detected.`;
+  } else {
+    const chains2 = active.slice(0,2).map(x=>x.chain_name).join(" and ");
+    summary=`This wallet has ${totalTx.toLocaleString()} total transactions across ${active.length} of 8 scanned chains, with ${chains2} being the most active network${active.length>1?"s":""}. ${top.chain_name} alone accounts for ${top.tx_count.toLocaleString()} transactions and ${top.total_gas_fee_native} ${top.symbol} in gas fees. ${isWhale?"The volume and cross-chain footprint suggest a power user, protocol operator, or trading bot.":"Activity patterns are typical of a regular DeFi participant spread across mainnet and L2 networks."}`;
+  }
+
+  return {total_tx_count:totalTx,chains_checked:8,summary,chain_results:results};
+}
+
+async function go(){
+  if(busy) return;
+  const raw=document.getElementById("wi").value.trim();
+  if(!/^0x[0-9a-fA-F]{40}$/.test(raw)){
+    showErr("Please enter a valid EVM address — 0x followed by 40 hex characters.");
+    return;
+  }
+  busy=true; hideErr(); hideSum();
+  document.getElementById("gbtn").disabled=true;
+  document.getElementById("skelg").classList.add("v");
+
+  setSt("Submitting to GenLayer Intelligent Contract…",0); await sleep(700);
+  setSt("Validators fetching data across 8 EVM chains…",1); await sleep(1000);
+  setSt("Running Optimistic Democracy consensus…",2); await sleep(800);
+  setSt("Generating AI cross-chain summary…",3); await sleep(600);
+
+  document.getElementById("skelg").classList.remove("v");
+  render(generateReport(raw), raw);
+  busy=false;
+  document.getElementById("gbtn").disabled=false;
+  hideSt();
+}
+
+function render(r,addr){
+  document.getElementById("ashow").textContent=addr;
+  document.getElementById("ttx").textContent=(r.total_tx_count||0).toLocaleString();
+  const act=(r.chain_results||[]).filter(x=>x.status==="ok"&&x.tx_count>0).length;
+  document.getElementById("actc").textContent=act;
+  document.getElementById("chkc").textContent=r.chains_checked||8;
+  document.getElementById("smtxt").textContent=r.summary||"—";
+  document.getElementById("sum").classList.add("v");
+
+  const grid=document.getElementById("cg");
+  grid.innerHTML="";
+  const filtered=(r.chain_results||[]).filter(x=>{
+    const k=CHAINS.find(c=>c.label===x.chain_name||x.chain_name.toLowerCase().includes(c.key));
+    return !k||selected.includes(k.key);
+  });
+  filtered.forEach((ch,i)=>{
+    const card=document.createElement("div");
+    const hasAct=ch.status==="ok"&&ch.tx_count>0;
+    card.className="cc"+(ch.status==="error"?" er":hasAct?" act":"");
+    card.style.animationDelay=(i*.05)+"s";
+    const dotCls=hasAct?"ok":ch.status==="error"?"er":"";
+    card.innerHTML=`
+      <div class="ch">
+        <div class="dot ${dotCls}"></div>
+        <div class="cn">${ch.chain_name}</div>
+        <span class="cs">${ch.symbol}</span>
+      </div>
+      <div class="cst">
+        <div>
+          <div class="ml">Transactions</div>
+          <div class="mv ${ch.tx_count>0?"g":"m"}">${ch.tx_count>0?ch.tx_count.toLocaleString():"—"}</div>
+        </div>
+        <div>
+          <div class="ml">Gas Fees</div>
+          <div class="mv m">${ch.status==="ok"&&ch.tx_count>0?ch.total_gas_fee_native+" "+ch.symbol:ch.status==="error"?"Error":"—"}</div>
+        </div>
+      </div>
+      ${ch.status==="error"&&ch.error_msg?`<div class="ce">${ch.error_msg}</div>`:""}
+    `;
+    grid.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>
